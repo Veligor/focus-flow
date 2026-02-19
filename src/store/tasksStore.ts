@@ -1,9 +1,12 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export type Task = {
   id: string;
   title: string;
   completed: boolean;
+  createdAt: number;
 };
 
 
@@ -14,30 +17,39 @@ type TasksState = {
   removeTask: (id: string) => void;
 };
 
-export const useTasksStore = create<TasksState>((set) => ({
-  tasks: [],
+export const useTasksStore = create<TasksState>()(
+  persist(
+    (set) => ({
+      tasks: [],
 
-  addTask: (title) =>
-    set((state) => ({
-      tasks: [
-        ...state.tasks,
-        {
-          id: Date.now().toString(),
-          title,
-          completed: false,
-        },
-      ],
-    })),
+      addTask: (title) =>
+        set((state) => ({
+          tasks: [
+            ...state.tasks,
+            {
+              id: Date.now().toString(),
+              title,
+              completed: false,
+              createdAt: Date.now(),
+            },
+          ],
+        })),
 
-  toggleTask: (id) =>
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task,
-      ),
-    })),
+      toggleTask: (id) =>
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? { ...task, completed: !task.completed } : task,
+          ),
+        })),
 
-  removeTask: (id) =>
-    set((state) => ({
-      tasks: state.tasks.filter((task) => task.id !== id),
-    })),
-}));
+      removeTask: (id) =>
+        set((state) => ({
+          tasks: state.tasks.filter((t) => t.id !== id),
+        })),
+    }),
+    {
+      name: "tasks-storage",
+      storage: createJSONStorage(() => AsyncStorage),
+    },
+  ),
+);
