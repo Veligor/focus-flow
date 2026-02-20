@@ -15,6 +15,7 @@ type TasksState = {
   addTask: (title: string) => void;
   toggleTask: (id: string) => void;
   removeTask: (id: string) => void;
+  updateTask: (id: string, title: string) => void;
 };
 
 export const useTasksStore = create<TasksState>()(
@@ -45,6 +46,12 @@ export const useTasksStore = create<TasksState>()(
       removeTask: (id) =>
         set((state) => ({
           tasks: state.tasks.filter((t) => t.id !== id),
+        })),
+      updateTask: (id, title) =>
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? { ...task, title } : task,
+          ),
         })),
     }),
     {
