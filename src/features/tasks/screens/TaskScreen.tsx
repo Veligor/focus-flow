@@ -10,7 +10,8 @@ import {
 import { useState } from "react";
 import { useTasksStore } from "../../../store/tasksStore";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
-import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import Swipeable from "react-native-gesture-handler/Swipeable";
+
 
 export const TasksScreen = () => {
   const { tasks, addTask, toggleTask, removeTask, updateTask } =
@@ -67,16 +68,6 @@ export const TasksScreen = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.addButton,
-            pressed && { opacity: 0.7 },
-          ]}
-          onPress={openAddModal}
-        >
-          <Text style={styles.addButtonText}>+ Добавить задачу</Text>
-        </Pressable>
-
         <FlatList
           data={tasks}
           keyExtractor={(item) => item.id}
@@ -98,7 +89,15 @@ export const TasksScreen = () => {
             </Swipeable>
           )}
         />
-
+        <Pressable
+          style={({ pressed }) => [
+            styles.fab,
+            pressed && { transform: [{ scale: 0.95 }] },
+          ]}
+          onPress={openAddModal}
+        >
+          <Text style={styles.fabText}>+</Text>
+        </Pressable>
         <Modal visible={modalVisible} animationType="fade" transparent={true}>
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
@@ -206,4 +205,28 @@ const styles = StyleSheet.create({
   btnSave: { backgroundColor: "#5856D6" },
   btnCancel: { backgroundColor: "#8E8E93" },
   btnText: { color: "white", fontWeight: "600" },
+  fab: {
+    position: "absolute",
+    right: 20,
+    bottom: 30,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "#5856D6",
+    justifyContent: "center",
+    alignItems: "center",
+
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+
+  fabText: {
+    color: "white",
+    fontSize: 32,
+    lineHeight: 34,
+    fontWeight: "bold",
+  },
 });
