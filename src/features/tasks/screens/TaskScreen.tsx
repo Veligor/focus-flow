@@ -7,7 +7,7 @@ import {
   TextInput,
   StyleSheet,
 } from "react-native";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useTasksStore } from "../../../store/tasksStore";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import Swipeable from "react-native-gesture-handler/Swipeable";
@@ -20,6 +20,8 @@ export const TasksScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState("");
   const [currentId, setCurrentId] = useState<string | null>(null);
+  
+  const inputRef = useRef<TextInput>(null);
 
   // Открыть модалку для создания
   const openAddModal = () => {
@@ -98,7 +100,16 @@ export const TasksScreen = () => {
         >
           <Text style={styles.fabText}>+</Text>
         </Pressable>
-        <Modal visible={modalVisible} animationType="fade" transparent={true}>
+        <Modal
+          visible={modalVisible}
+          animationType="fade"
+          transparent={true}
+          onShow={() => {
+            setTimeout(() => {
+              inputRef.current?.focus();
+            }, 50);
+          }}
+        >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>
@@ -106,12 +117,12 @@ export const TasksScreen = () => {
               </Text>
 
               <TextInput
+                ref={inputRef}
                 placeholder="Что нужно сделать?"
                 value={title}
                 onChangeText={setTitle}
                 style={styles.input}
                 placeholderTextColor="#999"
-                autoFocus
               />
 
               <View style={styles.row}>
