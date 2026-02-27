@@ -7,6 +7,7 @@ export type Task = {
   title: string;
   completed: boolean;
   createdAt: number;
+  // date?: string;
 };
 
 

@@ -1,12 +1,24 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useTasksStore } from "../../../store/tasksStore";
 import { useNavigation } from "@react-navigation/native";
+import { isToday } from "date-fns";
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
   const tasks = useTasksStore((s) => s.tasks);
 
   const completed = tasks.filter((t) => t.completed).length;
+
+  // Задачи на сегодня
+  const todayTasks = tasks.filter(
+    (t) => (t.createdAt ? isToday(new Date(t.createdAt)) : true), // временно true если даты нет
+  );
+
+  const todayCompleted = todayTasks.filter((t) => t.completed).length;
+
+  // Прогресс дня (0 — 1)
+  const progress =
+    todayTasks.length > 0 ? todayCompleted / todayTasks.length : 0;
 
   // ... (импорты и начало компонента)
   return (
@@ -45,13 +57,30 @@ export const HomeScreen = () => {
         <Text style={styles.stat}>0 выполнено</Text>
       </Pressable>
       {/* Сегодняшние задачи */}
+      {/* Сегодняшние задачи */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Сегодняшние задачи</Text>
+        <Text style={styles.sectionTitle}>Сегодня</Text>
 
-        {tasks.length === 0 ? (
-          <Text style={styles.empty}>Нет задач</Text>
+        {/* Progress */}
+        {todayTasks.length > 0 && (
+          <View style={styles.progressWrapper}>
+            <View style={styles.progressBackground}>
+              <View
+                style={[styles.progressFill, { width: `${progress * 100}%` }]}
+              />
+            </View>
+
+            <Text style={styles.progressText}>
+              {todayCompleted} / {todayTasks.length} выполнено
+            </Text>
+          </View>
+        )}
+
+        {/* Список */}
+        {todayTasks.length === 0 ? (
+          <Text style={styles.empty}>На сегодня задач нет 🎉</Text>
         ) : (
-          tasks.slice(0, 3).map((task) => (
+          todayTasks.slice(0, 3).map((task) => (
             <View key={task.id} style={styles.taskRow}>
               <Text
                 style={[
@@ -67,7 +96,7 @@ export const HomeScreen = () => {
       </View>
     </View>
   );
-};
+};;
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: "#f5f5f5" }, // Добавлены кавычки
@@ -85,6 +114,28 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: 16, color: "#666", marginBottom: 6 },
   stat: { fontSize: 22, fontWeight: "bold", color: "#333" },
+  progressWrapper: {
+    marginBottom: 12,
+  },
+
+  progressBackground: {
+    height: 8,
+    backgroundColor: "#eee",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+
+  progressFill: {
+    height: "100%",
+    backgroundColor: "#5856D6",
+  },
+
+  progressText: {
+    marginTop: 6,
+    fontSize: 14,
+    color: "#666",
+  },
+
   section: {
     marginTop: 10,
   },
