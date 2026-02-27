@@ -1,9 +1,15 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, TextInput } from "react-native";
 import { useTasksStore } from "../../../store/tasksStore";
 import { useNavigation } from "@react-navigation/native";
 import { isToday } from "date-fns";
+import {useState} from "react";
 
 export const HomeScreen = () => {
+const addTask = useTasksStore((s) => s.addTask);
+
+const [quickTitle, setQuickTitle] = useState("");
+
+
   const navigation = useNavigation();
   const tasks = useTasksStore((s) => s.tasks);
 
@@ -21,6 +27,13 @@ export const HomeScreen = () => {
     todayTasks.length > 0 ? todayCompleted / todayTasks.length : 0;
 
   // ... (импорты и начало компонента)
+  const handleQuickAdd = () => {
+    if (!quickTitle.trim()) return;
+
+    addTask(quickTitle);
+    setQuickTitle("");
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Сегодня</Text>
@@ -56,7 +69,29 @@ export const HomeScreen = () => {
         <Text style={styles.cardTitle}>Привычки</Text>
         <Text style={styles.stat}>0 выполнено</Text>
       </Pressable>
-      {/* Сегодняшние задачи */}
+      {/* Быстрое добавление */}
+      <View style={styles.quickAdd}>
+        <TextInput
+          placeholder="Быстро добавить задачу..."
+          value={quickTitle}
+          onChangeText={setQuickTitle}
+          style={styles.quickInput}
+          placeholderTextColor="#999"
+          onSubmitEditing={handleQuickAdd}
+          returnKeyType="done"
+        />
+
+        <Pressable
+          style={({ pressed }) => [
+            styles.quickButton,
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
+          onPress={handleQuickAdd}
+        >
+          <Text style={styles.quickButtonText}>Добавить</Text>
+        </Pressable>
+      </View>
+
       {/* Сегодняшние задачи */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Сегодня</Text>
@@ -167,5 +202,31 @@ const styles = StyleSheet.create({
   empty: {
     color: "#999",
     fontStyle: "italic",
+  },
+  quickAdd: {
+    flexDirection: "row",
+    marginBottom: 16,
+  },
+
+  quickInput: {
+    flex: 1,
+    backgroundColor: "white",
+    padding: 14,
+    borderRadius: 12,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: "#eee",
+  },
+
+  quickButton: {
+    backgroundColor: "#5856D6",
+    paddingHorizontal: 16,
+    justifyContent: "center",
+    borderRadius: 12,
+  },
+
+  quickButtonText: {
+    color: "white",
+    fontWeight: "600",
   },
 });
