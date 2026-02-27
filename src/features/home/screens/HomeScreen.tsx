@@ -44,6 +44,27 @@ export const HomeScreen = () => {
         <Text style={styles.cardTitle}>Привычки</Text>
         <Text style={styles.stat}>0 выполнено</Text>
       </Pressable>
+      {/* Сегодняшние задачи */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Сегодняшние задачи</Text>
+
+        {tasks.length === 0 ? (
+          <Text style={styles.empty}>Нет задач</Text>
+        ) : (
+          tasks.slice(0, 3).map((task) => (
+            <View key={task.id} style={styles.taskRow}>
+              <Text
+                style={[
+                  styles.taskText,
+                  task.completed && styles.completedTask,
+                ]}
+              >
+                {task.title}
+              </Text>
+            </View>
+          ))
+        )}
+      </View>
     </View>
   );
 };
@@ -64,4 +85,36 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: 16, color: "#666", marginBottom: 6 },
   stat: { fontSize: 22, fontWeight: "bold", color: "#333" },
+  section: {
+    marginTop: 10,
+  },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+
+  taskRow: {
+    backgroundColor: "white",
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 8,
+    elevation: 1,
+  },
+
+  taskText: {
+    fontSize: 16,
+    color: "#333",
+  },
+
+  completedTask: {
+    textDecorationLine: "line-through",
+    color: "#aaa",
+  },
+
+  empty: {
+    color: "#999",
+    fontStyle: "italic",
+  },
 });
