@@ -77,7 +77,10 @@ export const TasksScreen = () => {
             <Swipeable renderRightActions={() => renderRightActions(item)}>
               <Pressable
                 onPress={() => toggleTask(item.id)}
-                style={styles.taskItem}
+                style={({ pressed }) => [
+                  styles.taskItem,
+                  { opacity: pressed ? 0.5 : 1 },
+                ]}
               >
                 <Text
                   style={[

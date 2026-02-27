@@ -21,7 +21,7 @@ export const HomeScreen = () => {
       >
         <Text style={styles.cardTitle}>Задачи</Text>
         <Text style={styles.stat}>
-          {completed} / {tasks.length} выполнено
+          Выполнено: {completed} / {tasks.length}
         </Text>
       </Pressable>
 
