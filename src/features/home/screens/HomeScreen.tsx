@@ -1,4 +1,14 @@
-import { View, Text, StyleSheet, Pressable, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Keyboard,
+} from "react-native";
 import { useTasksStore } from "../../../store/tasksStore";
 import { useNavigation } from "@react-navigation/native";
 import { isToday } from "date-fns";
@@ -32,9 +42,19 @@ const [quickTitle, setQuickTitle] = useState("");
 
     addTask(quickTitle);
     setQuickTitle("");
+    Keyboard.dismiss();
   };
 
   return (
+    <KeyboardAvoidingView
+  style={{ flex: 1 }}
+  behavior={Platform.OS === "ios" ? "padding" : "height"}
+>
+  <ScrollView
+    contentContainerStyle={{ flexGrow: 1 }}
+    keyboardShouldPersistTaps="handled"
+  >
+    
     <View style={styles.container}>
       <Text style={styles.title}>Сегодня</Text>
 
@@ -130,6 +150,8 @@ const [quickTitle, setQuickTitle] = useState("");
         )}
       </View>
     </View>
+      </ScrollView>
+</KeyboardAvoidingView>
   );
 };;
 
