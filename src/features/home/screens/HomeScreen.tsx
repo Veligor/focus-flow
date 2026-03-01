@@ -145,7 +145,21 @@ const [quickTitle, setQuickTitle] = useState("");
 
             {/* Список */}
             {todayTasks.length === 0 ? (
-              <Text style={styles.empty}>На сегодня задач нет 🎉</Text>
+              <View style={styles.emptyWrapper}>
+                <Text style={styles.emptyTitle}>🎉 Отличная работа!</Text>
+
+                <Text style={styles.emptySubtitle}>На сегодня задач нет</Text>
+
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.emptyButton,
+                    { opacity: pressed ? 0.8 : 1 },
+                  ]}
+                  onPress={() => navigation.navigate("Tasks" as never)}
+                >
+                  <Text style={styles.emptyButtonText}>Добавить задачу</Text>
+                </Pressable>
+              </View>
             ) : (
               todayTasks.slice(0, 3).map((task) => (
                 <Pressable
@@ -267,6 +281,37 @@ const styles = StyleSheet.create({
   },
 
   quickButtonText: {
+    color: "white",
+    fontWeight: "600",
+  },
+  emptyWrapper: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 16,
+    alignItems: "center",
+    elevation: 1,
+  },
+
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+
+  emptySubtitle: {
+    fontSize: 14,
+    color: "#777",
+    marginBottom: 12,
+  },
+
+  emptyButton: {
+    backgroundColor: "#5856D6",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+
+  emptyButtonText: {
     color: "white",
     fontWeight: "600",
   },
