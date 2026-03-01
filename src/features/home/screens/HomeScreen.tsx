@@ -16,6 +16,7 @@ import {useState} from "react";
 
 export const HomeScreen = () => {
 const addTask = useTasksStore((s) => s.addTask);
+const toggleTask = useTasksStore((state) => state.toggleTask);
 
 const [quickTitle, setQuickTitle] = useState("");
 
@@ -47,111 +48,129 @@ const [quickTitle, setQuickTitle] = useState("");
 
   return (
     <KeyboardAvoidingView
-  style={{ flex: 1 }}
-  behavior={Platform.OS === "ios" ? "padding" : "height"}
->
-  <ScrollView
-    contentContainerStyle={{ flexGrow: 1 }}
-    keyboardShouldPersistTaps="handled"
-  >
-    
-    <View style={styles.container}>
-      <Text style={styles.title}>Сегодня</Text>
-
-      {/* Задачи */}
-      <Pressable
-        android_ripple={{ color: "#eeeeee" }}
-        style={({ pressed }) => [styles.card, { opacity: pressed ? 0.7 : 1 }]}
-        onPress={() => navigation.navigate("Tasks" as never)}
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.cardTitle}>Задачи</Text>
-        <Text style={styles.stat}>
-          Выполнено: {completed} / {tasks.length}
-        </Text>
-      </Pressable>
+        <View style={styles.container}>
+          <Text style={styles.title}>Сегодня</Text>
 
-      {/* Фокус */}
-      <Pressable
-        android_ripple={{ color: "#eeeeee" }}
-        style={({ pressed }) => [styles.card, { opacity: pressed ? 0.7 : 1 }]}
-        onPress={() => navigation.navigate("Pomodoro" as never)}
-      >
-        <Text style={styles.cardTitle}>Фокус</Text>
-        <Text style={styles.stat}>0 сессий</Text>
-      </Pressable>
-
-      {/* Привычки */}
-      <Pressable
-        android_ripple={{ color: "#eeeeee" }}
-        style={({ pressed }) => [styles.card, { opacity: pressed ? 0.7 : 1 }]}
-        onPress={() => navigation.navigate("Habits" as never)}
-      >
-        <Text style={styles.cardTitle}>Привычки</Text>
-        <Text style={styles.stat}>0 выполнено</Text>
-      </Pressable>
-      {/* Быстрое добавление */}
-      <View style={styles.quickAdd}>
-        <TextInput
-          placeholder="Быстро добавить задачу..."
-          value={quickTitle}
-          onChangeText={setQuickTitle}
-          style={styles.quickInput}
-          placeholderTextColor="#999"
-          onSubmitEditing={handleQuickAdd}
-          returnKeyType="done"
-        />
-
-        <Pressable
-          style={({ pressed }) => [
-            styles.quickButton,
-            { opacity: pressed ? 0.7 : 1 },
-          ]}
-          onPress={handleQuickAdd}
-        >
-          <Text style={styles.quickButtonText}>Добавить</Text>
-        </Pressable>
-      </View>
-
-      {/* Сегодняшние задачи */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Сегодня</Text>
-
-        {/* Progress */}
-        {todayTasks.length > 0 && (
-          <View style={styles.progressWrapper}>
-            <View style={styles.progressBackground}>
-              <View
-                style={[styles.progressFill, { width: `${progress * 100}%` }]}
-              />
-            </View>
-
-            <Text style={styles.progressText}>
-              {todayCompleted} / {todayTasks.length} выполнено
+          {/* Задачи */}
+          <Pressable
+            android_ripple={{ color: "#eeeeee" }}
+            style={({ pressed }) => [
+              styles.card,
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
+            onPress={() => navigation.navigate("Tasks" as never)}
+          >
+            <Text style={styles.cardTitle}>Задачи</Text>
+            <Text style={styles.stat}>
+              Выполнено: {completed} / {tasks.length}
             </Text>
-          </View>
-        )}
+          </Pressable>
 
-        {/* Список */}
-        {todayTasks.length === 0 ? (
-          <Text style={styles.empty}>На сегодня задач нет 🎉</Text>
-        ) : (
-          todayTasks.slice(0, 3).map((task) => (
-            <View key={task.id} style={styles.taskRow}>
-              <Text
-                style={[
-                  styles.taskText,
-                  task.completed && styles.completedTask,
-                ]}
-              >
-                {task.title}
-              </Text>
-            </View>
-          ))
-        )}
-      </View>
-    </View>
+          {/* Фокус */}
+          <Pressable
+            android_ripple={{ color: "#eeeeee" }}
+            style={({ pressed }) => [
+              styles.card,
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
+            onPress={() => navigation.navigate("Pomodoro" as never)}
+          >
+            <Text style={styles.cardTitle}>Фокус</Text>
+            <Text style={styles.stat}>0 сессий</Text>
+          </Pressable>
+
+          {/* Привычки */}
+          <Pressable
+            android_ripple={{ color: "#eeeeee" }}
+            style={({ pressed }) => [
+              styles.card,
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
+            onPress={() => navigation.navigate("Habits" as never)}
+          >
+            <Text style={styles.cardTitle}>Привычки</Text>
+            <Text style={styles.stat}>0 выполнено</Text>
+          </Pressable>
+          {/* Быстрое добавление */}
+          <View style={styles.quickAdd}>
+            <TextInput
+              placeholder="Быстро добавить задачу..."
+              value={quickTitle}
+              onChangeText={setQuickTitle}
+              style={styles.quickInput}
+              placeholderTextColor="#999"
+              onSubmitEditing={handleQuickAdd}
+              returnKeyType="done"
+            />
+
+            <Pressable
+              style={({ pressed }) => [
+                styles.quickButton,
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+              onPress={handleQuickAdd}
+            >
+              <Text style={styles.quickButtonText}>Добавить</Text>
+            </Pressable>
+          </View>
+
+          {/* Сегодняшние задачи */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Сегодня</Text>
+
+            {/* Progress */}
+            {todayTasks.length > 0 && (
+              <View style={styles.progressWrapper}>
+                <View style={styles.progressBackground}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      { width: `${progress * 100}%` },
+                    ]}
+                  />
+                </View>
+
+                <Text style={styles.progressText}>
+                  {todayCompleted} / {todayTasks.length} выполнено
+                </Text>
+              </View>
+            )}
+
+            {/* Список */}
+            {todayTasks.length === 0 ? (
+              <Text style={styles.empty}>На сегодня задач нет 🎉</Text>
+            ) : (
+              todayTasks.slice(0, 3).map((task) => (
+                <Pressable
+                  key={task.id}
+                  onPress={() => toggleTask(task.id)}
+                  style={({ pressed }) => [
+                    styles.taskRow,
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.taskText,
+                      task.completed && styles.completedTask,
+                    ]}
+                  >
+                    {task.title}
+                  </Text>
+                </Pressable>
+              ))
+            )}
+          </View>
+        </View>
       </ScrollView>
-</KeyboardAvoidingView>
+    </KeyboardAvoidingView>
   );
 };;
 
