@@ -7,7 +7,7 @@ export type Task = {
   title: string;
   completed: boolean;
   createdAt: number;
-  // date?: string;
+  dueDate: string;
 };
 
 
@@ -24,7 +24,7 @@ export const useTasksStore = create<TasksState>()(
     (set) => ({
       tasks: [],
 
-      addTask: (title) =>
+      addTask: (title: string, dueDate?: string) =>
         set((state) => ({
           tasks: [
             ...state.tasks,
@@ -33,6 +33,7 @@ export const useTasksStore = create<TasksState>()(
               title,
               completed: false,
               createdAt: Date.now(),
+              dueDate: dueDate ?? new Date().toISOString(), // по умолчанию сегодня
             },
           ],
         })),

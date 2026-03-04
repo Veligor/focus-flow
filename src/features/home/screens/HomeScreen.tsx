@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useTasksStore } from "../../../store/tasksStore";
 import { useNavigation } from "@react-navigation/native";
-import { isToday } from "date-fns";
+import { isToday, isBefore, startOfDay } from "date-fns";
 import {useState} from "react";
 
 export const HomeScreen = () => {
@@ -27,9 +27,23 @@ const [quickTitle, setQuickTitle] = useState("");
   const completed = tasks.filter((t) => t.completed).length;
 
   // Задачи на сегодня
-  const todayTasks = tasks.filter(
-    (t) => (t.createdAt ? isToday(new Date(t.createdAt)) : true), // временно true если даты нет
-  );
+ const todayTasks = tasks.filter(
+   (t) => t.dueDate && isToday(new Date(t.dueDate)),
+ );
+
+ const overdueTasks = tasks.filter(
+   (t) =>
+     t.dueDate &&
+     isBefore(new Date(t.dueDate), startOfDay(new Date())) &&
+     !t.completed,
+ );
+
+ const futureTasks = tasks.filter(
+   (t) =>
+     t.dueDate &&
+     !isToday(new Date(t.dueDate)) &&
+     !isBefore(new Date(t.dueDate), startOfDay(new Date())),
+ );
 
   const todayCompleted = todayTasks.filter((t) => t.completed).length;
 
