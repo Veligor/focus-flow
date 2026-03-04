@@ -13,10 +13,10 @@ export type Task = {
 
 type TasksState = {
   tasks: Task[];
-  addTask: (title: string) => void;
+  addTask: (title: string, dueDate?: string) => void;
   toggleTask: (id: string) => void;
   removeTask: (id: string) => void;
-  updateTask: (id: string, title: string) => void;
+  updateTask: (id: string, title: string, dueDate: string) => void;
 };
 
 export const useTasksStore = create<TasksState>()(
@@ -49,10 +49,10 @@ export const useTasksStore = create<TasksState>()(
         set((state) => ({
           tasks: state.tasks.filter((t) => t.id !== id),
         })),
-      updateTask: (id, title) =>
+      updateTask: (id: string, title: string, dueDate: string) =>
         set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, title } : task,
+          tasks: state.tasks.map((t) =>
+            t.id === id ? { ...t, title, dueDate } : t,
           ),
         })),
     }),

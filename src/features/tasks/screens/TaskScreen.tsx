@@ -6,12 +6,13 @@ import {
   Modal,
   TextInput,
   StyleSheet,
+  Task,
 } from "react-native";
 import { useState, useRef } from "react";
 import { useTasksStore } from "../../../store/tasksStore";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import Swipeable from "react-native-gesture-handler/Swipeable";
-
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export const TasksScreen = () => {
   const { tasks, addTask, toggleTask, removeTask, updateTask } =
@@ -20,40 +21,48 @@ export const TasksScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState("");
   const [currentId, setCurrentId] = useState<string | null>(null);
-  
+  const [dueDate, setDueDate] = useState<Date>(new Date());
+  const [showPicker, setShowPicker] = useState(false);
+
   const inputRef = useRef<TextInput>(null);
 
   // Открыть модалку для создания
-  const openAddModal = () => {
-    setCurrentId(null);
-    setTitle("");
-    setModalVisible(true);
-  };
+const openAddModal = () => {
+  setCurrentId(null);
+  setTitle("");
+  setDueDate(new Date()); // по умолчанию сегодня
+  setModalVisible(true);
+};
 
   // Открыть модалку для редактирования
-  const openEditModal = (id: string, text: string) => {
-    setCurrentId(id);
-    setTitle(text);
-    setModalVisible(true);
-  };
+ const openEditModal = (id: string, text: string, date: string) => {
+   setCurrentId(id);
+   setTitle(text);
 
-  const handleSave = () => {
-    if (!title.trim()) return;
+     const parsedDate =
+       date && !isNaN(Date.parse(date)) ? new Date(date) : new Date();
+       
+   setDueDate(parsedDate);
+   setModalVisible(true);
+ };
 
-    if (currentId) {
-      updateTask(currentId, title);
-    } else {
-      addTask(title);
-    }
+const handleSave = () => {
+  if (!title.trim()) return;
 
-    setTitle("");
-    setModalVisible(false);
-  };
+  if (currentId) {
+    updateTask(currentId, title, dueDate.toISOString());
+  } else {
+    addTask(title, dueDate.toISOString());
+  }
+
+  setTitle("");
+  setModalVisible(false);
+};
 
   const renderRightActions = (item: any) => (
     <View style={styles.swipeContainer}>
       <Pressable
-        onPress={() => openEditModal(item.id, item.title)}
+        onPress={() => openEditModal(item.id, item.title, item.dueDate)}
         style={[styles.swipeButton, styles.btnEdit]}
       >
         <Text style={styles.btnText}>Изм.</Text>
@@ -127,7 +136,28 @@ export const TasksScreen = () => {
                 style={styles.input}
                 placeholderTextColor="#999"
               />
+              <Pressable
+                style={styles.dateButton}
+                onPress={() => setShowPicker(true)}
+              >
+                <Text style={styles.dateText}>
+                  📅 {dueDate.toLocaleDateString()}
+                </Text>
+              </Pressable>
 
+              {showPicker && (
+                <DateTimePicker
+                  value={dueDate}
+                  mode="date"
+                  display="default"
+                  onChange={(event, selectedDate) => {
+                    setShowPicker(false);
+                    if (selectedDate) {
+                      setDueDate(selectedDate);
+                    }
+                  }}
+                />
+              )}
               <View style={styles.row}>
                 <Pressable
                   style={[styles.btn, styles.btnCancel]}
@@ -242,5 +272,17 @@ const styles = StyleSheet.create({
     fontSize: 32,
     lineHeight: 34,
     fontWeight: "bold",
+  },
+  dateButton: {
+    padding: 12,
+    backgroundColor: "#f2f2f2",
+    borderRadius: 10,
+    marginBottom: 20,
+    alignItems: "center",
+  },
+
+  dateText: {
+    fontSize: 16,
+    color: "#333",
   },
 });
