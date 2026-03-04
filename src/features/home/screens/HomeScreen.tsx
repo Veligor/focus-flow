@@ -134,7 +134,25 @@ const [quickTitle, setQuickTitle] = useState("");
               <Text style={styles.quickButtonText}>Добавить</Text>
             </Pressable>
           </View>
+          {/* Просроченные задачи */}
+          {overdueTasks.length > 0 && (
+            <View style={styles.overdueSection}>
+              <Text style={styles.overdueTitle}>🔴 Просроченные</Text>
 
+              {overdueTasks.map((task) => (
+                <Pressable
+                  key={task.id}
+                  onPress={() => toggleTask(task.id)}
+                  style={({ pressed }) => [
+                    styles.overdueTask,
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
+                >
+                  <Text style={styles.overdueText}>{task.title}</Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
           {/* Сегодняшние задачи */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Сегодня</Text>
@@ -329,4 +347,30 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "600",
   },
+  overdueSection: {
+  marginBottom: 16,
+  padding: 16,
+  backgroundColor: "#fff0f0",
+  borderRadius: 16,
+},
+
+overdueTitle: {
+  fontSize: 16,
+  fontWeight: "bold",
+  color: "#d32f2f",
+  marginBottom: 8,
+},
+
+overdueTask: {
+  backgroundColor: "white",
+  padding: 12,
+  borderRadius: 10,
+  marginBottom: 6,
+},
+
+overdueText: {
+  fontSize: 15,
+  color: "#b00020",
+  fontWeight: "500",
+},
 });

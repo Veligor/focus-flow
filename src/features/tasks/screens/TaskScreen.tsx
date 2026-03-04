@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useState, useRef } from "react";
 import { useTasksStore } from "../../../store/tasksStore";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -27,37 +27,37 @@ export const TasksScreen = () => {
   const inputRef = useRef<TextInput>(null);
 
   // Открыть модалку для создания
-const openAddModal = () => {
-  setCurrentId(null);
-  setTitle("");
-  setDueDate(new Date()); // по умолчанию сегодня
-  setModalVisible(true);
-};
+  const openAddModal = () => {
+    setCurrentId(null);
+    setTitle("");
+    setDueDate(new Date()); // по умолчанию сегодня
+    setModalVisible(true);
+  };
 
   // Открыть модалку для редактирования
- const openEditModal = (id: string, text: string, date: string) => {
-   setCurrentId(id);
-   setTitle(text);
+  const openEditModal = (id: string, text: string, date: string) => {
+    setCurrentId(id);
+    setTitle(text);
 
-     const parsedDate =
-       date && !isNaN(Date.parse(date)) ? new Date(date) : new Date();
-       
-   setDueDate(parsedDate);
-   setModalVisible(true);
- };
+    const parsedDate =
+      date && !isNaN(Date.parse(date)) ? new Date(date) : new Date();
 
-const handleSave = () => {
-  if (!title.trim()) return;
+    setDueDate(parsedDate);
+    setModalVisible(true);
+  };
 
-  if (currentId) {
-    updateTask(currentId, title, dueDate.toISOString());
-  } else {
-    addTask(title, dueDate.toISOString());
-  }
+  const handleSave = () => {
+    if (!title.trim()) return;
 
-  setTitle("");
-  setModalVisible(false);
-};
+    if (currentId) {
+      updateTask(currentId, title, dueDate.toISOString());
+    } else {
+      addTask(title, dueDate.toISOString());
+    }
+
+    setTitle("");
+    setModalVisible(false);
+  };
 
   const renderRightActions = (item: any) => (
     <View style={styles.swipeContainer}>
