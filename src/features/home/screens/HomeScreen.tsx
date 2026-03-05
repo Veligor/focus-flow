@@ -79,7 +79,7 @@ const [quickTitle, setQuickTitle] = useState("");
               styles.card,
               { opacity: pressed ? 0.7 : 1 },
             ]}
-            onPress={() => navigation.navigate("Tasks" as never)}
+            onPress={() => navigation.navigate("Tasks")}
           >
             <Text style={styles.cardTitle}>Задачи</Text>
             <Text style={styles.stat}>

@@ -4,8 +4,9 @@ import { HabitsScreen } from "../../src/features/tasks/screens/HabitsScreen";
 import { PomodoroScreen } from "../../src/features/tasks/screens/PomodoroScreen";
 import { StatsScreen } from "../../src/features/tasks/screens/StatsScreen";
 import { HomeScreen } from "../features/home/screens/HomeScreen";
+import { RootStackParamList } from "../navigation/NavigationTypes";
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<RootStackParamList>();
 
 export const RootTabs = () => {
   return (
