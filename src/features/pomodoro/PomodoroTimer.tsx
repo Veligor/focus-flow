@@ -1,10 +1,19 @@
 import { useEffect } from "react";
-import { usePomodoroStore } from "../../store/usePomodoroStore";
+import {
+  usePomodoroTime,
+  usePomodoroMode,
+  usePomodoroIsRunning,
+  usePomodoroActions,
+} from "../../store/usePomodoroStore";
 import { View, Text, Pressable, StyleSheet } from "react-native";
+import { formatTime } from "../../utils/formatTime";
 
 export const PomodoroTimer = () => {
-  const { timeLeft, mode, isRunning, start, pause, reset, tick } =
-    usePomodoroStore();
+  
+  const timeLeft = usePomodoroTime();
+  const mode = usePomodoroMode();
+  const isRunning = usePomodoroIsRunning();
+  const { start, pause, reset, tick } = usePomodoroActions();
 
   useEffect(() => {
     if (!isRunning) return;
@@ -16,18 +25,6 @@ export const PomodoroTimer = () => {
     return () => clearInterval(interval);
   }, [isRunning, tick]);
 
-const formatTime = (seconds: number): string => {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-
-  
-  const formattedMinutes = minutes.toString().padStart(2, "0");
-  const formattedSeconds = remainingSeconds.toString().padStart(2, "0");
-
-  return `${formattedMinutes}:${formattedSeconds}`;
-};
-
-
   return (
     <View style={styles.container}>
       <Text style={styles.modeText}>
@@ -37,13 +34,12 @@ const formatTime = (seconds: number): string => {
       <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
 
       <View style={styles.buttonContainer}>
-        
         <Pressable
           onPress={isRunning ? pause : start}
           style={({ pressed }) => [
             styles.mainButton,
             { backgroundColor: isRunning ? "#FF9800" : "#4CAF50" },
-            pressed && { opacity: 0.7 }, 
+            pressed && { opacity: 0.7 },
           ]}
         >
           <Text style={styles.buttonText}>{isRunning ? "Pause" : "Start"}</Text>
@@ -53,7 +49,7 @@ const formatTime = (seconds: number): string => {
           onPress={reset}
           style={({ pressed }) => [
             styles.resetButton,
-            pressed && { backgroundColor: "#eee" }, 
+            pressed && { backgroundColor: "#eee" },
           ]}
         >
           <Text style={styles.resetText}>Reset</Text>
@@ -77,8 +73,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     paddingVertical: 15,
     borderRadius: 12,
-    elevation: 3, 
-    shadowColor: "#000", 
+    elevation: 3,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
   },

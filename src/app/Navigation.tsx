@@ -8,33 +8,22 @@ import React from "react";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// export const AppNavigator = () => {
-//   return (
-//     <NavigationContainer>
-//       <RootTabs />
-//       <PomodoroTimer />
-//     </NavigationContainer>
-//   );
-// };
-
 export const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Main" // Приложение начнется с Табов
-        screenOptions={{ headerShown: false }} // Прячем заголовки Стека
+        initialRouteName="Main"
+        screenOptions={{ headerShown: false }}
       >
-        {/* Экран 1: Главное меню (наш RootTabs) */}
         <Stack.Screen name="Main" component={RootTabs} />
 
-        {/* Экран 2: Таймер (откроется на весь экран поверх Табов) */}
         <Stack.Screen
           name="Pomodoro"
           component={PomodoroTimer}
           options={{
             headerShown: true,
             title: "Фокус",
-            presentation: "modal", // Опционально: выезжает снизу как карточка (iOS стиль)
+            presentation: "modal",
           }}
         />
       </Stack.Navigator>
