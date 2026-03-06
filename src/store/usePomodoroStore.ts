@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { PomodoroState } from "../features/pomodoro/types";
+import { useShallow } from "zustand/react/shallow";
 
 const WORK_TIME = 25 * 60;
 const BREAK_TIME = 5 * 60;
@@ -41,6 +42,17 @@ export const usePomodoroStore = create<PomodoroState>((set, get) => ({
   },
 }));
 
+export const usePomodoroProgress = () =>
+  usePomodoroStore((state) => {
+    if (state.totalDuration <= 0) return 0;
+
+    const progress =
+      (state.totalDuration - state.timeLeft) / state.totalDuration;
+
+    const clampedProgress = Math.max(0, Math.min(progress, 1));
+    return parseFloat(clampedProgress.toFixed(4));
+  });
+
 export const usePomodoroTime = () =>
   usePomodoroStore((state) => state.timeLeft);
 
@@ -50,9 +62,11 @@ export const usePomodoroIsRunning = () =>
   usePomodoroStore((state) => state.isRunning);
 
 export const usePomodoroActions = () =>
-  usePomodoroStore((state) => ({
-    start: state.start,
-    tick: state.tick,
-    pause: state.pause,
-    reset: state.reset,
-  }));
+  usePomodoroStore(
+    useShallow((state) => ({
+      start: state.start,
+      tick: state.tick,
+      pause: state.pause,
+      reset: state.reset,
+    })),
+  );

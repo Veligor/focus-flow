@@ -7,13 +7,15 @@ import {
 } from "../../store/usePomodoroStore";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { formatTime } from "../../utils/formatTime";
+import { PomodoroProgressRing } from "./PomodoroProgressRing";
+import { usePomodoroProgress } from "../../store/usePomodoroStore";
 
 export const PomodoroTimer = () => {
-  
   const timeLeft = usePomodoroTime();
   const mode = usePomodoroMode();
   const isRunning = usePomodoroIsRunning();
   const { start, pause, reset, tick } = usePomodoroActions();
+  const progress = usePomodoroProgress();
 
   useEffect(() => {
     if (!isRunning) return;
@@ -30,7 +32,7 @@ export const PomodoroTimer = () => {
       <Text style={styles.modeText}>
         {mode === "work" ? "💻 Focus" : "☕ Break"}
       </Text>
-
+      <PomodoroProgressRing progress={progress} />
       <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
 
       <View style={styles.buttonContainer}>
