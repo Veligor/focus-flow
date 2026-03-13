@@ -1,86 +1,80 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet } from "react-native";
 import {
   usePomodoroTime,
   usePomodoroMode,
   usePomodoroIsRunning,
   usePomodoroActions,
+  usePomodoroProgress,
+  usePomodoroModeColor,
 } from "../../store/usePomodoroStore";
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import { formatTime } from "../../utils/formatTime";
-import { PomodoroProgressRing } from "./PomodoroProgressRing";
-import { usePomodoroProgress } from "../../store/usePomodoroStore";
+import { PomodoroAnimatedRing } from "../pomodoro/components/PomodoroProgressRing";
+import { TimerDisplay } from "./components/TimerDisplay";
+import { TimerControls } from "./components/TimerControls";
 
 export const PomodoroTimer = () => {
   const timeLeft = usePomodoroTime();
   const mode = usePomodoroMode();
   const isRunning = usePomodoroIsRunning();
-  const { start, pause, reset, tick } = usePomodoroActions();
   const progress = usePomodoroProgress();
+  const color = usePomodoroModeColor();
+  const { start, pause, reset, tick } = usePomodoroActions();
 
+  // Логика тика таймера
   useEffect(() => {
     if (!isRunning) return;
-
-    const interval = setInterval(() => {
-      tick();
-    }, 1000);
-
+    const interval = setInterval(() => tick(), 1000);
     return () => clearInterval(interval);
   }, [isRunning, tick]);
 
   return (
     <View style={styles.container}>
+      {/* 1. Заголовок режима */}
       <Text style={styles.modeText}>
         {mode === "work" ? "💻 Focus" : "☕ Break"}
       </Text>
-      <PomodoroProgressRing progress={progress} />
-      <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
 
-      <View style={styles.buttonContainer}>
-        <Pressable
-          onPress={isRunning ? pause : start}
-          style={({ pressed }) => [
-            styles.mainButton,
-            { backgroundColor: isRunning ? "#FF9800" : "#4CAF50" },
-            pressed && { opacity: 0.7 },
-          ]}
-        >
-          <Text style={styles.buttonText}>{isRunning ? "Pause" : "Start"}</Text>
-        </Pressable>
-
-        <Pressable
-          onPress={reset}
-          style={({ pressed }) => [
-            styles.resetButton,
-            pressed && { backgroundColor: "#eee" },
-          ]}
-        >
-          <Text style={styles.resetText}>Reset</Text>
-        </Pressable>
+      {/* 2. Центрированная область с кольцом и временем */}
+      <View style={styles.timerWrapper}>
+        <PomodoroAnimatedRing progress={progress} color={color} size={280} />
+        <View style={styles.displayOverlay}>
+          <TimerDisplay timeLeft={timeLeft} />
+        </View>
       </View>
+
+      {/* 3. Кнопки управления */}
+      <TimerControls
+        isRunning={isRunning}
+        color={color}
+        onStartPause={isRunning ? pause : start}
+        onReset={reset}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { alignItems: "center", padding: 20 },
-  timerText: {
-    fontSize: 80,
-    fontWeight: "bold",
-    marginVertical: 20,
-    color: "#333",
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
   },
-  modeText: { fontSize: 24, fontWeight: "500", color: "#666" },
-  buttonContainer: { flexDirection: "row", alignItems: "center", gap: 20 },
-  mainButton: {
-    paddingHorizontal: 40,
-    paddingVertical: 15,
-    borderRadius: 12,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
+  modeText: {
+    fontSize: 24,
+    fontWeight: "600",
+    color: "#666",
+    marginBottom: 40,
   },
-  buttonText: { color: "white", fontSize: 18, fontWeight: "bold" },
-  resetButton: { padding: 15, borderRadius: 8 },
-  resetText: { color: "#888", fontSize: 16 },
+  timerWrapper: {
+    width: 280,
+    height: 280,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  displayOverlay: {
+    position: "absolute", 
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

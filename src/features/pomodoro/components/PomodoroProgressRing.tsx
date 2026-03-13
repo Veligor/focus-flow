@@ -1,46 +1,59 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import Svg, { Circle } from "react-native-svg";
+import Animated, {
+  useSharedValue,
+  useAnimatedProps,
+  withTiming,
+} from "react-native-reanimated";
 
 interface Props {
   progress: number;
+  color: string;
   size?: number;
   strokeWidth?: number;
 }
 
-export const PomodoroProgressRing: React.FC<Props> = ({
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
+export const PomodoroAnimatedRing: React.FC<Props> = ({
   progress,
-  size = 220,
-  strokeWidth = 12,
+  color,
+  size = 280,
+  strokeWidth = 15,
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
+  const progressValue = useSharedValue(progress);
 
-  const strokeDashoffset = circumference * (1 - progress);
+  useEffect(() => {
+    progressValue.value = withTiming(progress, { duration: 500 });
+  }, [progress]);
+
+  const animatedProps = useAnimatedProps(() => ({
+    strokeDashoffset: circumference * (1 - progressValue.value),
+  }));
 
   return (
     <View style={styles.container}>
       <Svg width={size} height={size}>
-        {/* background circle */}
         <Circle
-          stroke="#eee"
+          stroke="#F0F0F0"
           fill="none"
           cx={size / 2}
           cy={size / 2}
           r={radius}
           strokeWidth={strokeWidth}
         />
-
-        {/* progress circle */}
-        <Circle
-          stroke="#4CAF50"
+        <AnimatedCircle
+          stroke={color}
           fill="none"
           cx={size / 2}
           cy={size / 2}
           r={radius}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
+          animatedProps={animatedProps}
           strokeLinecap="round"
           rotation="-90"
           origin={`${size / 2}, ${size / 2}`}
@@ -51,8 +64,5 @@ export const PomodoroProgressRing: React.FC<Props> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  container: { alignItems: "center", justifyContent: "center" },
 });

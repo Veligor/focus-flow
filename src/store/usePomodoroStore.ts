@@ -70,3 +70,8 @@ export const usePomodoroActions = () =>
       reset: state.reset,
     })),
   );
+
+export const usePomodoroModeColor = () =>
+  usePomodoroStore((state) => {
+    return state.mode === "work" ? "#F44336" : "#4CAF50";
+  });
