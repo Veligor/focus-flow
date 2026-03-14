@@ -1,5 +1,7 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
+import { playButtonHaptic } from "../../../utils/feedback/feedback";
+
 
 interface Props {
   isRunning: boolean;
@@ -17,7 +19,10 @@ export const TimerControls: React.FC<Props> = ({
   return (
     <View style={styles.buttonContainer}>
       <Pressable
-        onPress={onStartPause}
+        onPress={async () => {
+          await playButtonHaptic(); 
+          onStartPause(); 
+        }}
         style={({ pressed }) => [
           styles.mainButton,
           { backgroundColor: color },
@@ -27,7 +32,10 @@ export const TimerControls: React.FC<Props> = ({
         <Text style={styles.buttonText}>{isRunning ? "Pause" : "Start"}</Text>
       </Pressable>
 
-      <Pressable onPress={onReset} style={styles.resetButton}>
+      <Pressable onPress={async () => {
+          await playButtonHaptic();
+          onReset();
+        }} style={styles.resetButton}>
         <Text style={styles.resetText}>Reset</Text>
       </Pressable>
     </View>

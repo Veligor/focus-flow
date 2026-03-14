@@ -1,6 +1,10 @@
 import { create } from "zustand";
 import { PomodoroState } from "../features/pomodoro/types";
 import { useShallow } from "zustand/react/shallow";
+import {
+  playSuccessHaptic,
+  playTimerEndSound,
+} from "../utils/feedback/feedback";
 
 const WORK_TIME = 25 * 60;
 const BREAK_TIME = 5 * 60;
@@ -27,6 +31,10 @@ export const usePomodoroStore = create<PomodoroState>((set, get) => ({
     const { timeLeft, mode } = get();
 
     if (timeLeft <= 1) {
+
+       playSuccessHaptic();
+       playTimerEndSound();
+    
       const nextMode = mode === "work" ? "break" : "work";
       const nextDuration = nextMode === "work" ? WORK_TIME : BREAK_TIME;
 
