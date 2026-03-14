@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, AppState } from "react-native";
 import {
   usePomodoroTime,
   usePomodoroMode,
@@ -20,13 +20,22 @@ export const PomodoroTimer = () => {
   const color = usePomodoroModeColor();
   const { start, pause, reset, tick } = usePomodoroActions();
 
-  // Логика тика таймера
+  // Эффект для ежесекундного обновления (плавность заполнения)
   useEffect(() => {
     if (!isRunning) return;
     const interval = setInterval(() => tick(), 1000);
     return () => clearInterval(interval);
   }, [isRunning, tick]);
+//Эффект для выхода из "сна" (синхронизация при разблокировке)
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") {
+        tick();
+      }
+    });
 
+    return () => subscription.remove();
+  }, [tick]);
   return (
     <View style={styles.container}>
       {/* 1. Заголовок режима */}

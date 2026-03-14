@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { playButtonHaptic } from "../../../utils/feedback/feedback";
 
-
 interface Props {
   isRunning: boolean;
   color: string;
@@ -20,8 +19,8 @@ export const TimerControls: React.FC<Props> = ({
     <View style={styles.buttonContainer}>
       <Pressable
         onPress={async () => {
-          await playButtonHaptic(); 
-          onStartPause(); 
+          await playButtonHaptic();
+          onStartPause();
         }}
         style={({ pressed }) => [
           styles.mainButton,
@@ -32,37 +31,43 @@ export const TimerControls: React.FC<Props> = ({
         <Text style={styles.buttonText}>{isRunning ? "Pause" : "Start"}</Text>
       </Pressable>
 
-      <Pressable onPress={async () => {
+      <Pressable
+        onPress={async () => {
           await playButtonHaptic();
           onReset();
-        }} style={styles.resetButton}>
+        }}
+        style={styles.resetButton}
+      >
         <Text style={styles.resetText}>Reset</Text>
       </Pressable>
     </View>
-  );
-};
-
+  ); 
+}; 
 const styles = StyleSheet.create({
   buttonContainer: {
+    flexDirection: "row",
     alignItems: "center",
-    gap: 16,
+    justifyContent: "center",
+    gap: 20,
     marginTop: 40,
   },
   mainButton: {
-    paddingVertical: 14,
-    paddingHorizontal: 60,
-    borderRadius: 100, 
+    paddingHorizontal: 40,
+    paddingVertical: 15,
+    borderRadius: 30,
+    minWidth: 150,
+    alignItems: "center",
   },
   buttonText: {
     color: "white",
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "600",
   },
   resetButton: {
-    paddingVertical: 10,
+    padding: 10,
   },
   resetText: {
+    color: "#666",
     fontSize: 16,
-    color: "#999",
   },
 });

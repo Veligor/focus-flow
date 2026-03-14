@@ -5,6 +5,8 @@ export interface PomodoroState {
   timeLeft: number;
   isRunning: boolean;
   totalDuration: number;
+
+  startTime: number | null;
   
   start: () => void;
   pause: () => void;

@@ -14,10 +14,33 @@ export const usePomodoroStore = create<PomodoroState>((set, get) => ({
   timeLeft: WORK_TIME,
   isRunning: false,
   totalDuration: WORK_TIME,
+  startTime: null,
 
-  start: () => set({ isRunning: true }),
+  start: () => {
+     const { timeLeft, totalDuration } = get();
+    const now = Date.now();
+ const elapsedInMs = (totalDuration - timeLeft) * 1000;
+    set({
+      isRunning: true,
+      startTime: now - elapsedInMs,
+    });
+  },
 
-  pause: () => set({ isRunning: false }),
+  pause: () => {
+    const { startTime, totalDuration } = get();
+
+    if (!startTime) return;
+
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+
+    const remaining = totalDuration - elapsed;
+
+    set({
+      isRunning: false,
+      timeLeft: Math.max(remaining, 0),
+      startTime: null,
+    });
+  },
 
   reset: () =>
     set({
@@ -25,28 +48,40 @@ export const usePomodoroStore = create<PomodoroState>((set, get) => ({
       timeLeft: WORK_TIME,
       totalDuration: WORK_TIME,
       isRunning: false,
+      startTime: null,
     }),
 
   tick: () => {
-    const { timeLeft, mode } = get();
+    const { startTime, totalDuration, mode } = get();
 
-    if (timeLeft <= 1) {
+    if (!startTime) return;
 
-       playSuccessHaptic();
-       playTimerEndSound();
-    
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+
+    const remaining = totalDuration - elapsed;
+
+    if (remaining <= 0) {
+
+          playSuccessHaptic();
+          playTimerEndSound();
+          
       const nextMode = mode === "work" ? "break" : "work";
+
       const nextDuration = nextMode === "work" ? WORK_TIME : BREAK_TIME;
 
       set({
         mode: nextMode,
-        timeLeft: nextDuration,
         totalDuration: nextDuration,
+        timeLeft: nextDuration,
+        startTime: Date.now(),
       });
+
       return;
     }
 
-    set({ timeLeft: timeLeft - 1 });
+    set({
+      timeLeft: remaining,
+    });
   },
 }));
 
